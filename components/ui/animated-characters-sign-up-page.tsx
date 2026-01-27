@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
+import { signIn } from "next-auth/react";
+
 import { cn } from "@/lib/utils";
 
 interface PupilProps {
@@ -815,6 +817,7 @@ export default function SignUpPage() {
               variant="outline"
               className="w-full h-12 bg-background border-border/60 hover:bg-accent"
               type="button"
+              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
             >
               <Mail className="mr-2 size-5" />
               Log in with Google
@@ -824,7 +827,10 @@ export default function SignUpPage() {
           {/* Sign Up Link */}
           <div className="text-center text-sm text-muted-foreground mt-8">
             Do you have an account?{" "}
-            <a href="/login" className="text-foreground font-medium hover:underline">
+            <a
+              href="/login"
+              className="text-foreground font-medium hover:underline"
+            >
               Sign In
             </a>
           </div>
