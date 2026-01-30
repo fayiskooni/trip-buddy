@@ -8,7 +8,12 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
 import { signIn } from "next-auth/react";
 
+import Form from "next/form";
+
 import { cn } from "@/lib/utils";
+import { createAccount } from "@/app/actions/sign-up";
+import { useFormStatus } from "react-dom";
+import { toast } from "sonner";
 
 interface PupilProps {
   size?: number;
@@ -178,6 +183,22 @@ const EyeBall = ({
   );
 };
 
+function SubmitButton({ isLoading }: { isLoading: boolean }) {
+  const { pending } = useFormStatus();
+  const loading = pending || isLoading;
+
+  return (
+    <Button
+      type="submit"
+      className="w-full h-12 text-base font-medium"
+      size="lg"
+      disabled={loading}
+    >
+      {loading ? "Creating account..." : "Create Account"}
+    </Button>
+  );
+}
+
 export default function SignUpPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [name, setName] = useState("");
@@ -317,19 +338,19 @@ export default function SignUpPage() {
     await new Promise((resolve) => setTimeout(resolve, 300));
 
     // Mock authentication - validate against dummy credentials
-    if (email === "fayiskooni@gmail.com" && password === "1234") {
-      const username = email.split("@")[0];
+    // if (email === "fayiskooni@gmail.com" && password === "1234") {
+    //   const username = email.split("@")[0];
 
-      console.log("✅ Login successful!");
-      alert(`Login successful! Welcome,${username}`);
-      // In a real app, you would:
-      // - Store auth token
-      // - Redirect to dashboard
-      // - Set user session
-    } else {
-      setError("Invalid email or password. Please try again.");
-      console.log("❌ Login failed");
-    }
+    //   console.log("✅ Login successful!");
+    //   alert(`Login successful! Welcome,${username}`);
+    //   // In a real app, you would:
+    //   // - Store auth token
+    //   // - Redirect to dashboard
+    //   // - Set user session
+    // } else {
+    //   setError("Invalid email or password. Please try again.");
+    //   console.log("❌ Login failed");
+    // }
 
     setIsLoading(false);
   };
@@ -712,14 +733,35 @@ export default function SignUpPage() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <Form
+            action={async (formData) => {
+              setIsLoading(true);
+              setError("");
+              try {
+                await createAccount(formData);
+                toast.success("Account created successfully!");
+              } catch (e: any) {
+                // If it's a redirect error, don't show an error toast
+                if (e.message === "NEXT_REDIRECT") {
+                  toast.success("Account created successfully!");
+                  return;
+                }
+                setError(e.message || "Failed to create account");
+                toast.error(e.message || "Failed to create account");
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            className="space-y-5"
+          >
             <div className="space-y-2">
               <Label htmlFor="name" className="text-sm font-medium">
                 Name
               </Label>
               <Input
                 id="name"
-                type="name"
+                name="name"
+                type="text"
                 placeholder="anna"
                 value={name}
                 autoComplete="off"
@@ -737,6 +779,7 @@ export default function SignUpPage() {
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="anna@gmail.com"
                 value={email}
@@ -756,6 +799,7 @@ export default function SignUpPage() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
@@ -779,7 +823,7 @@ export default function SignUpPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
+                <Checkbox id="remember" name="remember" />
                 <Label
                   htmlFor="remember"
                   className="text-sm font-normal cursor-pointer"
@@ -801,15 +845,8 @@ export default function SignUpPage() {
               </div>
             )}
 
-            <Button
-              type="submit"
-              className="w-full h-12 text-base font-medium"
-              size="lg"
-              disabled={isLoading}
-            >
-              {isLoading ? "Signing in..." : "Log in"}
-            </Button>
-          </form>
+            <SubmitButton isLoading={isLoading} />
+          </Form>
 
           {/* Social Login */}
           <div className="mt-6">

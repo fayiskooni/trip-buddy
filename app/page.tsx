@@ -1,11 +1,5 @@
-'use client'
+import { redirect } from "next/navigation";
 
-import { useRouter } from "next/navigation";
-
-const Home = () => {
-    const router = useRouter()
-    router.replace("/login")
-    return
+export default function Home() {
+  redirect("/login");
 }
- 
-export default Home;

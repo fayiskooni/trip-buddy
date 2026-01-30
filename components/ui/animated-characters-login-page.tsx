@@ -7,6 +7,10 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { login } from "@/app/actions/login";
+import { toast } from "sonner";
+import { useFormStatus } from "react-dom";
+import Form from "next/form";
 
 interface PupilProps {
   size?: number;
@@ -175,6 +179,22 @@ const EyeBall = ({
     </div>
   );
 };
+
+function SubmitButton({ isLoading }: { isLoading: boolean }) {
+  const { pending } = useFormStatus();
+  const loading = pending || isLoading;
+
+  return (
+    <Button
+      type="submit"
+      className="w-full h-12 text-base font-medium"
+      size="lg"
+      disabled={loading}
+    >
+      {loading ? "Signing in..." : "Log in"}
+    </Button>
+  );
+}
 
 function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -709,13 +729,33 @@ function LoginPage() {
           </div>
 
           {/* Login Form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <Form
+            action={async (formData) => {
+              setIsLoading(true);
+              setError("");
+              try {
+                await login(formData);
+                toast.success("Login successful! Welcome back.");
+              } catch (e: any) {
+                if (e.message === "NEXT_REDIRECT") {
+                  toast.success("Login successful! Welcome back.");
+                  return;
+                }
+                setError(e.message || "Invalid email or password");
+                toast.error(e.message || "Invalid email or password");
+              } finally {
+                setIsLoading(false);
+              }
+            }}
+            className="space-y-5"
+          >
             <div className="space-y-2">
               <Label htmlFor="email" className="text-sm font-medium">
                 Email
               </Label>
               <Input
                 id="email"
+                name="email"
                 type="email"
                 placeholder="anna@gmail.com"
                 value={email}
@@ -735,6 +775,7 @@ function LoginPage() {
               <div className="relative">
                 <Input
                   id="password"
+                  name="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="••••••••"
                   value={password}
@@ -758,7 +799,7 @@ function LoginPage() {
 
             <div className="flex items-center justify-between">
               <div className="flex items-center space-x-2">
-                <Checkbox id="remember" />
+                <Checkbox id="remember" name="remember" />
                 <Label
                   htmlFor="remember"
                   className="text-sm font-normal cursor-pointer"
@@ -780,15 +821,8 @@ function LoginPage() {
               </div>
             )}
 
-            <Button
-              type="submit"
-              className="w-full h-12 text-base font-medium"
-              size="lg"
-              disabled={isLoading}
-            >
-              {isLoading ? "Signing in..." : "Log in"}
-            </Button>
-          </form>
+            <SubmitButton isLoading={isLoading} />
+          </Form>
 
           {/* Social Login */}
           <div className="mt-6">
