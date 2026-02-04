@@ -27,5 +27,5 @@ export async function createAccount(formData: FormData) {
     console.error("Failed to create account:", error);
     throw new Error("Failed to create account. Email might already be in use.");
   }
-  redirect("/dashboard");
+  redirect("/home");
 }

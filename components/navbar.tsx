@@ -1,7 +1,7 @@
 import { AnimatedNavigationTabs } from "@/components/ui/animated-navigation-tabs";
 
 const AnimatedNavigationTabsDemo = () => (
-  <div className="bg-background h-40 flex items-center justify-center">
+  <div className="w-full">
     <AnimatedNavigationTabs items={ITEMS} />
   </div>
 );
@@ -9,9 +9,9 @@ const AnimatedNavigationTabsDemo = () => (
 export default AnimatedNavigationTabsDemo;
 
 const ITEMS = [
-  { id: 1, tile: "Overview" },
-  { id: 2, tile: "Activity" },
-  { id: 3, tile: "Domains" },
-  { id: 4, tile: "AI" },
-  { id: 5, tile: "Settings" },
+  { id: 1, tile: "Home", href: "/home" },
+  { id: 2, tile: "Packages", href: "/packages" },
+  { id: 3, tile: "Gallery", href: "/gallery" },
+  { id: 4, tile: "How it works", href: "/how-it-works" },
+  { id: 5, tile: "Contact", href: "/contact" },
 ];

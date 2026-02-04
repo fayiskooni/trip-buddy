@@ -28,5 +28,5 @@ export async function login(formData: FormData) {
 
   // In a real app with next-auth, you would use signIn() or set a cookie here.
   // For now, we just redirect as requested.
-  redirect("/dashboard");
+  redirect("/home");
 }
