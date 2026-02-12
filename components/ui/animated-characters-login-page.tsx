@@ -8,6 +8,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Eye, EyeOff, Mail, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { login } from "@/app/actions/login";
+import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 import { useFormStatus } from "react-dom";
 import Form from "next/form";
@@ -720,7 +721,7 @@ function LoginPage() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-black">
               Welcome back!
             </h1>
             <p className="text-muted-foreground text-sm">
@@ -741,8 +742,14 @@ function LoginPage() {
                   toast.success("Login successful! Welcome back.");
                   return;
                 }
-                setError(e.message || "Invalid email or password");
-                toast.error(e.message || "Invalid email or password");
+                // If the error message is too long (likely a stack trace) or not a user-friendly message,
+                // fallback to a generic error to prevent layout expansion.
+                const errorMessage = e.message && e.message.length < 50 
+                  ? e.message 
+                  : "Invalid email or password";
+                
+                setError(errorMessage);
+                toast.error(errorMessage);
               } finally {
                 setIsLoading(false);
               }
@@ -750,7 +757,7 @@ function LoginPage() {
             className="space-y-5"
           >
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
+              <Label htmlFor="email" className="text-sm font-medium text-black">
                 Email
               </Label>
               <Input
@@ -764,12 +771,12 @@ function LoginPage() {
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
                 required
-                className="h-12 bg-background border-border/60 focus:border-primary"
+                className="h-12 bg-background border-border/60 focus:border-primary text-black"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="text-sm font-medium text-black">
                 Password
               </Label>
               <div className="relative">
@@ -781,7 +788,7 @@ function LoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 pr-10 bg-background border-border/60 focus:border-primary"
+                  className="h-12 pr-10 bg-background border-border/60 focus:border-primary text-black"
                 />
                 <button
                   type="button"
@@ -802,7 +809,7 @@ function LoginPage() {
                 <Checkbox id="remember" name="remember" />
                 <Label
                   htmlFor="remember"
-                  className="text-sm font-normal cursor-pointer"
+                  className="text-sm font-normal cursor-pointer text-black"
                 >
                   Remember for 30 days
                 </Label>
@@ -816,7 +823,7 @@ function LoginPage() {
             </div>
 
             {error && (
-              <div className="p-3 text-sm text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg">
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
                 {error}
               </div>
             )}
@@ -828,20 +835,21 @@ function LoginPage() {
           <div className="mt-6">
             <Button
               variant="outline"
-              className="w-full h-12 bg-background border-border/60 hover:bg-accent"
+              className="w-full h-12 bg-background border-border/60 hover:bg-accent text-black"
               type="button"
+              onClick={() => signIn("google", { callbackUrl: "/home" })}
             >
-              <Mail className="mr-2 size-5" />
+              <Mail className="mr-2 size-5 text-black" />
               Log in with Google
             </Button>
           </div>
 
           {/* Sign Up Link */}
-          <div className="text-center text-sm text-muted-foreground mt-8">
+          <div className="text-center text-sm text-black mt-8">
             Don't have an account?{" "}
             <a
               href="/sign-up"
-              className="text-foreground font-medium hover:underline"
+              className="font-medium text-black hover:underline"
             >
               Sign Up
             </a>

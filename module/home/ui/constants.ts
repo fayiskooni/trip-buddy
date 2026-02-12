@@ -66,47 +66,47 @@ export const HEADERS = {
 
 export const TripImages = [
   {
-    src: "/trip/TripPlanning.png",
+    src: "https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&q=80&w=1000",
     quote: "Plan once. Travel better.",
   },
   {
-    src: "/trip/DiscoverTrips.png",
+    src: "https://images.unsplash.com/photo-1469854523086-cc02fe5d8800?auto=format&fit=crop&q=80&w=1000",
     quote: "Find trips made for you.",
   },
   {
-    src: "/trip/GroupTravel.png",
+    src: "https://images.unsplash.com/photo-1539635278303-d4002c07eae3?auto=format&fit=crop&q=80&w=1000",
     quote: "Travel is better together.",
   },
   {
-    src: "/trip/FixedDestination.png",
+    src: "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&q=80&w=1000",
     quote: "One place. Many stories.",
   },
   {
-    src: "/trip/JoinTrip.png",
+    src: "https://images.unsplash.com/photo-1501504905252-473c47e087f8?auto=format&fit=crop&q=80&w=1000",
     quote: "Join the journey.",
   },
   {
-    src: "/trip/CreateMemories.png",
+    src: "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&q=80&w=1000",
     quote: "Moments that last forever.",
   },
   {
-    src: "/trip/Community.png",
+    src: "https://images.unsplash.com/photo-1511632765486-a01980e01a18?auto=format&fit=crop&q=80&w=1000",
     quote: "A community that travels.",
   },
   {
-    src: "/trip/AdventureActivities.png",
+    src: "https://images.unsplash.com/photo-1533240332313-0db49b459ad6?auto=format&fit=crop&q=80&w=1000",
     quote: "Adventure at every step.",
   },
   {
-    src: "/trip/Safe&OrganizedTravel.png",
+    src: "https://images.unsplash.com/photo-1506012787146-f92b2d7d6d96?auto=format&fit=crop&q=80&w=1000",
     quote: "Travel with confidence.",
   },
   {
-    src: "/trip/MeetNewPeople.png",
+    src: "https://images.unsplash.com/photo-1523580494863-6f3031224c94?auto=format&fit=crop&q=80&w=1000",
     quote: "Strangers to travel buddies.",
   },
   {
-    src: "/trip/JourneyExperience.png",
+    src: "https://images.unsplash.com/photo-1454496522488-7a8e488e8606?auto=format&fit=crop&q=80&w=1000",
     quote: "Every journey matters.",
   },
 ];

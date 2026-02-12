@@ -724,7 +724,7 @@ export default function SignUpPage() {
 
           {/* Header */}
           <div className="text-center mb-10">
-            <h1 className="text-3xl font-bold tracking-tight mb-2">
+            <h1 className="text-3xl font-bold tracking-tight mb-2 text-black">
               Create an Account
             </h1>
             <p className="text-muted-foreground text-sm">
@@ -755,7 +755,7 @@ export default function SignUpPage() {
             className="space-y-5"
           >
             <div className="space-y-2">
-              <Label htmlFor="name" className="text-sm font-medium">
+              <Label htmlFor="name" className="text-sm font-medium text-black">
                 Name
               </Label>
               <Input
@@ -769,12 +769,12 @@ export default function SignUpPage() {
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
                 required
-                className="h-12 bg-background border-border/60 focus:border-primary"
+                className="h-12 bg-background border-border/60 focus:border-primary text-black"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium">
+              <Label htmlFor="email" className="text-sm font-medium text-black">
                 Email
               </Label>
               <Input
@@ -788,12 +788,12 @@ export default function SignUpPage() {
                 onFocus={() => setIsTyping(true)}
                 onBlur={() => setIsTyping(false)}
                 required
-                className="h-12 bg-background border-border/60 focus:border-primary"
+                className="h-12 bg-background border-border/60 focus:border-primary text-black"
               />
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium">
+              <Label htmlFor="password" className="text-sm font-medium text-black">
                 Password
               </Label>
               <div className="relative">
@@ -805,7 +805,7 @@ export default function SignUpPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="h-12 pr-10 bg-background border-border/60 focus:border-primary"
+                  className="h-12 pr-10 bg-background border-border/60 focus:border-primary text-black"
                 />
                 <button
                   type="button"
@@ -826,21 +826,21 @@ export default function SignUpPage() {
                 <Checkbox id="remember" name="remember" />
                 <Label
                   htmlFor="remember"
-                  className="text-sm font-normal cursor-pointer"
+                  className="text-sm font-normal cursor-pointer text-black"
                 >
                   Remember for 30 days
                 </Label>
               </div>
               <a
                 href="#"
-                className="text-sm text-primary hover:underline font-medium"
+                className="text-sm text-primary hover:underline font-medium text-black"
               >
                 Forgot password?
               </a>
             </div>
 
             {error && (
-              <div className="p-3 text-sm text-red-400 bg-red-950/20 border border-red-900/30 rounded-lg">
+              <div className="p-3 text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg">
                 {error}
               </div>
             )}
@@ -852,21 +852,21 @@ export default function SignUpPage() {
           <div className="mt-6">
             <Button
               variant="outline"
-              className="w-full h-12 bg-background border-border/60 hover:bg-accent"
+              className="w-full h-12 bg-background border-border/60 hover:bg-accent text-black"
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
+              onClick={() => signIn("google", { callbackUrl: "/home" })}
             >
-              <Mail className="mr-2 size-5" />
+              <Mail className="mr-2 size-5 text-black" />
               Log in with Google
             </Button>
           </div>
 
           {/* Sign Up Link */}
-          <div className="text-center text-sm text-muted-foreground mt-8">
+          <div className="text-center text-sm text-black mt-8">
             Do you have an account?{" "}
             <a
               href="/login"
-              className="text-foreground font-medium hover:underline"
+              className="font-medium hover:underline text-black"
             >
               Sign In
             </a>

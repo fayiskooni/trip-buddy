@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import { createSession } from "@/lib/auth";
 
 export async function login(formData: FormData) {
   const email = formData.get("email") as string;
@@ -26,7 +27,8 @@ export async function login(formData: FormData) {
     throw new Error("Invalid email or password");
   }
 
-  // In a real app with next-auth, you would use signIn() or set a cookie here.
-  // For now, we just redirect as requested.
+  // Create session
+  await createSession(user.id.toString());
+
   redirect("/home");
 }

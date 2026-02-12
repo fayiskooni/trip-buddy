@@ -3,6 +3,7 @@
 import prisma from "@/lib/prisma";
 import { redirect } from "next/navigation";
 import bcrypt from "bcryptjs";
+import { createSession } from "@/lib/auth";
 
 export async function createAccount(formData: FormData) {
   const email = formData.get("email") as string;
@@ -16,13 +17,15 @@ export async function createAccount(formData: FormData) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         email,
         password: hashedPassword,
         name,
       },
     });
+    
+    await createSession(user.id.toString());
   } catch (error) {
     console.error("Failed to create account:", error);
     throw new Error("Failed to create account. Email might already be in use.");
