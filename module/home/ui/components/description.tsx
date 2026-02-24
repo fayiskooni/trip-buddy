@@ -20,7 +20,7 @@ const Description = ({
   description2,
 }: DescriptionProps) => {
   return (
-    <div className="bg-background mt-40 flex flex-col items-center justify-center">
+    <div className="bg-background flex flex-col items-center justify-center">
       <div className="flex items-center h-14  text-black">
         <span className="border px-4 py-1 rounded-4xl h-full flex items-center justify-center">
           {content}

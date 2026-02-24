@@ -9,16 +9,20 @@ export const HomeView = () => {
   return (
     <>
       <HeroPage />
-      <Description {...HEADERS.SmartPlanning} />
-      <ExpandOnHover />
-      <Description {...HEADERS.OpenAdventures} />
-      <TravelStyle />
-      <Description {...HEADERS.SharedExperiences} />
-      <div className="w-full flex justify-center items-center">
-        <ImageSphere />
+      <div className="w-full min-h-screen flex flex-col items-center justify-center">
+        <Description {...HEADERS.SmartPlanning} />
+        <ExpandOnHover />
       </div>
-      <Description {...HEADERS.FocusedDestinations} />
-      <Description {...HEADERS.TravelCommunity} />
+      <div className="w-full min-h-screen flex flex-col items-center justify-center">
+        <Description {...HEADERS.OpenAdventures} />
+        <TravelStyle />
+      </div>
+      <div className="w-full min-h-screen flex flex-col items-center justify-center">
+        <Description {...HEADERS.SharedExperiences} />
+        <div className="w-full flex justify-center items-center">
+          <ImageSphere />
+        </div>
+      </div>
     </>
   );
 };

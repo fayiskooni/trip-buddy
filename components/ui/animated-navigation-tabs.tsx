@@ -14,7 +14,7 @@ export function AnimatedNavigationTabs({ items }: { items: Props[] }) {
 
   return (
     <nav className="relative w-full flex items-center justify-evenly py-6">
-      <div className="text-white font-semibold text-xl tracking-tight">
+      <div className="font-semibold text-xl tracking-tight glass p-2 px-4 rounded-2xl text-black/70">
         TripBuddy
       </div>
 
@@ -55,7 +55,7 @@ export function AnimatedNavigationTabs({ items }: { items: Props[] }) {
 
       <Button className="flex items-center gap-3 glass px-2 py-1 rounded-full h-14">
         <Link href="/create-trip" className="flex items-center">
-          <span className="px-3 text-white whitespace-nowrap">
+          <span className="px-3 text-black/70 whitespace-nowrap">
             Make Your Trip
           </span>
 

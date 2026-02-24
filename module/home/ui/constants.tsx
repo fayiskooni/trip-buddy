@@ -40,6 +40,38 @@ export const HEADERS = {
     description2:
       "explore iconic spots, and enjoy a safe, social, and unforgettable journey from start to finish.",
   },
+  FocusedDestinations: {
+    content: "Focused Destinations",
+    icon: MapPinCheck,
+    title: "One Destination,",
+    title2: "Endless",
+    title3: "Experiences",
+    description:
+      "Each trip is built around a fixed destination, allowing deeper exploration and better planning. Discover hidden spots,",
+    description2:
+      "local culture, and must-see highlights with a group that’s there for the same adventure.",
+  },
+  TravelCommunity: {
+    content: "Travel Community",
+    icon: Globe2,
+    title: "Meet Travelers",
+    title2: "Who",
+    title3: "Travel Like You",
+    description:
+      "Join a growing community of explorers who believe travel is better together. Make new friends,",
+    description2:
+      "share experiences, and turn group journeys into lasting connections beyond the trip.",
+  },
+};
+
+export const IntroAnimationData = {
+  content: "Focused Destinations",
+  icon: <MapPinCheck  className="w-10 h-10" />,
+  title: "Explore Our Vision",
+  title2: "The Future",
+  title3: "Is Here",
+  description: "Discover a world where technology meets creativity.",
+  description2: "Scroll through our curated collection.",
 };
 
 export const TripImages = [

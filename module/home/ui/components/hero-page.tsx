@@ -3,7 +3,7 @@ import Image from "next/image";
 
 const HeroPage = () => {
   return (
-    <div className="relative min-h-screen overflow-hidden rounded-4xl m-4">
+    <div className="relative min-h-screen overflow-hidden rounded-b-4xl">
       <Image
         src="/mountain.jpg"
         alt="background"

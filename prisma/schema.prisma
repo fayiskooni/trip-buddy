@@ -5,17 +5,184 @@
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
-  provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  TRAVELER
+  ORGANIZER
+  ADMIN
+}
+
+enum TripType {
+  FREE
+  PAID
+}
+
+enum TripStatus {
+  DRAFT
+  PENDING_REVIEW
+  APPROVED
+  COMPLETED
+  CANCELLED
+}
+
+enum MemberStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  UNPAID
+  PAID
+  REFUNDED
+}
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  password String
-  name  String?
+  id            Int      @id @default(autoincrement())
+  email         String   @unique
+  password      String
+  fullName      String
+  bio           String?
+  profileImage  String?
+  country       String?
+  role          UserRole @default(TRAVELER)
+  emailVerified Boolean  @default(false)
+  idVerified    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  organizedTrips   Trip[]       @relation("OrganizerTrips")
+  memberships      TripMember[]
+  bookings         Booking[]
+  reviewsGiven     Review[]     @relation("ReviewsGiven")
+  reviewsReceived  Review[]     @relation("ReviewsReceived")
+  messagesSent     Message[]    @relation("SentMessages")
+  messagesReceived Message[]    @relation("ReceivedMessages")
+  savedTrips       SavedTrip[]
+}
+
+model Trip {
+  id              Int        @id @default(autoincrement())
+  title           String
+  description     String
+  destination     String
+  category        String
+  tripType        TripType
+  pricePerPerson  Float?
+  currency        String?    @default("USD")
+  maxParticipants Int
+  startDate       DateTime
+  endDate         DateTime
+  status          TripStatus @default(DRAFT)
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  organizerId Int
+  organizer   User @relation("OrganizerTrips", fields: [organizerId], references: [id])
+
+  members  TripMember[]
+  bookings Booking[]
+  reviews  Review[]
+  images   TripImage[]
+  savedBy  SavedTrip[]
+}
+
+model TripImage {
+  id       Int    @id @default(autoincrement())
+  imageUrl String
+  tripId   Int
+  trip     Trip   @relation(fields: [tripId], references: [id])
+}
+
+model TripMember {
+  id       Int          @id @default(autoincrement())
+  tripId   Int
+  userId   Int
+  status   MemberStatus @default(PENDING)
+  joinedAt DateTime     @default(now())
+
+  trip Trip @relation(fields: [tripId], references: [id])
+  user User @relation(fields: [userId], references: [id])
+
+  @@unique([tripId, userId])
+}
+
+model Booking {
+  id              Int           @id @default(autoincrement())
+  tripId          Int
+  userId          Int
+  totalAmount     Float
+  platformFee     Float
+  organizerAmount Float
+  bookingStatus   BookingStatus @default(PENDING)
+  paymentStatus   PaymentStatus @default(UNPAID)
+  createdAt       DateTime      @default(now())
+
+  trip    Trip     @relation(fields: [tripId], references: [id])
+  user    User     @relation(fields: [userId], references: [id])
+  payment Payment?
+}
+
+model Payment {
+  id            Int           @id @default(autoincrement())
+  bookingId     Int           @unique
+  provider      String
+  transactionId String?
+  amount        Float
+  currency      String
+  status        PaymentStatus
+  paidAt        DateTime?
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+}
+
+model Review {
+  id         Int      @id @default(autoincrement())
+  tripId     Int
+  reviewerId Int
+  revieweeId Int
+  rating     Int
+  comment    String?
+  createdAt  DateTime @default(now())
+
+  trip     Trip @relation(fields: [tripId], references: [id])
+  reviewer User @relation("ReviewsGiven", fields: [reviewerId], references: [id])
+  reviewee User @relation("ReviewsReceived", fields: [revieweeId], references: [id])
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  tripId     Int?
+  senderId   Int
+  receiverId Int?
+  content    String
+  createdAt  DateTime @default(now())
+
+  sender   User  @relation("SentMessages", fields: [senderId], references: [id])
+  receiver User? @relation("ReceivedMessages", fields: [receiverId], references: [id])
+}
+
+model SavedTrip {
+  id      Int      @id @default(autoincrement())
+  userId  Int
+  tripId  Int
+  savedAt DateTime @default(now())
+
+  user User @relation(fields: [userId], references: [id])
+  trip Trip @relation(fields: [tripId], references: [id])
+
+  @@unique([userId, tripId])
 }
