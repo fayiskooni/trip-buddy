@@ -1,5 +1,10 @@
-import { redirect } from "next/navigation";
+import { HomeView } from "@/module/home/ui/views/home-view";
+import React from "react";
+import { verifySession } from "@/lib/auth";
 
-export default function Home() {
-  redirect("/login");
-}
+const page = async () => {
+  await verifySession();
+  return <HomeView />;
+};
+
+export default page;

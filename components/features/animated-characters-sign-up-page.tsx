@@ -854,10 +854,10 @@ export default function SignUpPage() {
               variant="outline"
               className="w-full h-12 bg-background border-border/60 hover:bg-accent text-black"
               type="button"
-              onClick={() => signIn("google", { callbackUrl: "/home" })}
+              onClick={() => signIn("google", { callbackUrl: "/" })}
             >
               <Mail className="mr-2 size-5 text-black" />
-              Log in with Google
+              Sign up with Google
             </Button>
           </div>
 

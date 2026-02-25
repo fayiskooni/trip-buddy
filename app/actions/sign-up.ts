@@ -21,7 +21,7 @@ export async function createAccount(formData: FormData) {
       data: {
         email,
         password: hashedPassword,
-        name,
+        fullName: name,
       },
     });
     
@@ -30,5 +30,5 @@ export async function createAccount(formData: FormData) {
     console.error("Failed to create account:", error);
     throw new Error("Failed to create account. Email might already be in use.");
   }
-  redirect("/home");
+  redirect("/");
 }

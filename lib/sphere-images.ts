@@ -1,4 +1,4 @@
-import { ImageData } from "@/components/ui/img-sphere";
+import { ImageData } from "@/components/features/img-sphere";
 
 // ==========================================
 // TRAVEL IMAGE DATA - Shared Experiences Theme

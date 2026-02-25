@@ -19,13 +19,13 @@ export const authOptions: NextAuthOptions = {
 
           const dbUser = await prisma.user.upsert({
             where: { email: user.email },
-            update: { name: user.name },
+            update: { fullName: user.name || "Google User" },
             create: {
               email: user.email,
-              name: user.name,
+              fullName: user.name || "Google User",
               password: "", // Google users don't have a password
             },
-          });
+          } as any);
 
           await createSession(dbUser.id.toString());
           return true;
@@ -37,7 +37,7 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async redirect({ url, baseUrl }) {
-       return baseUrl + "/home";
+       return baseUrl;
     },
   },
   session: {

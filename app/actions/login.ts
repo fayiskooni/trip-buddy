@@ -30,5 +30,5 @@ export async function login(formData: FormData) {
   // Create session
   await createSession(user.id.toString());
 
-  redirect("/home");
+  redirect("/");
 }

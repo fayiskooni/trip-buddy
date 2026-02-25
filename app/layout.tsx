@@ -22,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${urbanist.variable} font-sans`}>
+      <body className={`${urbanist.variable} font-sans bg-background text-foreground antialiased overscroll-none`}>
         <Toaster position="top-center" richColors />
         <Providers> {children}</Providers>
       </body>

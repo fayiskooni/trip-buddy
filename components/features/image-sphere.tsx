@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import SphereImageGrid, { SphereImageGridProps } from "@/components/ui/img-sphere";
+import SphereImageGrid, { SphereImageGridProps } from "@/components/features/img-sphere";
 import { generateSphereImages, DEFAULT_SPHERE_CONFIG } from "@/lib/sphere-images";
 
 /**
@@ -10,7 +10,7 @@ import { generateSphereImages, DEFAULT_SPHERE_CONFIG } from "@/lib/sphere-images
  * Drop this into any page:
  *
  * ```tsx
- * import ImageSphere from "@/components/ui/image-sphere";
+ * import ImageSphere from "@/components/features/image-sphere";
  *
  * <ImageSphere />
  * ```

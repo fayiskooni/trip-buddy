@@ -1,4 +1,4 @@
-import { AnimatedNavigationTabs } from "@/components/ui/animated-navigation-tabs";
+import { AnimatedNavigationTabs } from "@/components/features/animated-navigation-tabs";
 
 const AnimatedNavigationTabsDemo = () => (
   <div className="w-full">
@@ -9,7 +9,7 @@ const AnimatedNavigationTabsDemo = () => (
 export default AnimatedNavigationTabsDemo;
 
 const ITEMS = [
-  { id: 1, tile: "Home", href: "/home" },
+  { id: 1, tile: "Home", href: "/" },
   { id: 2, tile: "Packages", href: "/packages" },
   { id: 3, tile: "Gallery", href: "/gallery" },
   { id: 4, tile: "How it works", href: "/how-it-works" },

@@ -1,6 +1,8 @@
 import Image from "next/image";
+import { verifySession } from "@/lib/auth";
 
-const CreateTrip = () => {
+const CreateTrip = async () => {
+  await verifySession();
   return (
     <div className="fixed inset-0 overflow-hidden rounded-4xl m-4">
       {/* Background Image */}
