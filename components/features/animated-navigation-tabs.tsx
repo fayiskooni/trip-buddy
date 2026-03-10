@@ -80,7 +80,7 @@ export function AnimatedNavigationTabs({ items }: { items: Props[] }) {
               <User className="h-5 w-5" /> TripBuddy
             </button>
           </PopoverTrigger>
-          <PopoverContent className="w-80 p-5 mt-2 rounded-xl glass border-muted/50 shadow-2xl relative left-4">
+          <PopoverContent className="w-80 p-5 mt-2 rounded-2xl bg-background border border-muted shadow-2xl relative left-4">
             <div className="flex flex-col space-y-4">
               <div className="space-y-1 pb-4 border-b border-muted">
                 <div className="flex justify-between items-start">

@@ -60,6 +60,7 @@ model User {
   password      String?
   bio           String?
   country       String?
+  phone         String?
   role          UserRole  @default(TRAVELER)
   idVerified    Boolean   @default(false)
   createdAt     DateTime  @default(now())

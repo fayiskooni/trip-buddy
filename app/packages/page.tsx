@@ -5,11 +5,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { format } from "date-fns";
 import { CalendarIcon, MapPin, Users, Plus } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 import AnimatedNavigationTabsDemo from "@/components/navbar";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getTripColor } from "@/lib/constants";
 
 interface Trip {
   id: string;
@@ -23,6 +25,7 @@ interface Trip {
   maxParticipants: number;
   startDate: string;
   endDate: string;
+  organizerId: number;
   organizer: {
     name: string;
     image: string | null;
@@ -32,6 +35,7 @@ interface Trip {
 }
 
 export default function PackagesPage() {
+  const { data: session } = useSession();
   const [trips, setTrips] = useState<Trip[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -85,78 +89,89 @@ export default function PackagesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {trips.map((trip) => (
-              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/50 glass p-1.5 hover:shadow-xl transition-all duration-500 flex flex-col h-full bg-background/40">
-                <div className="relative h-72 w-full rounded-[1.8rem] overflow-hidden bg-muted">
-                  <Image
-                    src={trip.coverImage || `https://loremflickr.com/800/1000/${encodeURIComponent(trip.destination || trip.title || 'travel')}`}
-                    alt={trip.title}
-                    fill
-                    className="object-cover transition-transform duration-700 group-hover:scale-105 grayscale opacity-90"
-                    unoptimized
-                  />
+              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/20 bg-background hover:shadow-xl transition-all duration-500 flex flex-col h-full shadow-sm">
+                <div className="relative h-64 w-full overflow-hidden">
+                  {trip.coverImage ? (
+                    <Image
+                      src={trip.coverImage}
+                      alt={trip.title}
+                      fill
+                      className="object-cover transition-transform duration-700 group-hover:scale-105"
+                      unoptimized
+                    />
+                  ) : (
+                    <div 
+                      className="w-full h-full transition-transform duration-700 group-hover:scale-105" 
+                       style={{ backgroundColor: getTripColor(trip.id) || getTripColor(trip.title) }} 
+                    />
+                  )}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent" />
                   
+                  {/* Right Corner Metrics Tag (Joined / Max) */}
+                  <div className="absolute top-4 right-4 z-10">
+                    <div className="flex items-center gap-1.5 px-3 py-1 bg-white/90 backdrop-blur-md text-slate-800 rounded-full text-xs font-bold shadow-sm">
+                      <Users className="h-3.5 w-3.5 text-[#0ea5e9]" />
+                      <span>{trip.joinedCount} / {trip.maxParticipants}</span>
+                    </div>
+                  </div>
+
                   {/* Bottom Image Overlay Text */}
-                  <div className="absolute bottom-6 left-6 right-6">
+                  <div className="absolute bottom-5 left-6 right-6">
                      <div className="inline-block px-3 py-1 bg-white/30 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider mb-2 text-white">
                       {trip.category}
                     </div>
                     <h3 className="text-3xl font-extrabold text-white leading-tight mb-1 line-clamp-2">
                       {trip.title}
                     </h3>
-                    <div className="flex items-center text-white/80 text-base font-medium">
+                    <div className="flex items-center text-white/80 text-sm font-medium">
                       <span className="truncate">{trip.destination}</span>
                     </div>
                   </div>
                 </div>
 
-                <CardContent className="p-6 flex-grow flex flex-col">
+                <CardContent className="p-6 pt-6 flex-grow flex flex-col gap-4">
                   {/* Host Info */}
-                  <div className="flex items-center gap-3 mb-4 pb-4 border-b border-muted/50">
-                    <div className="w-10 h-10 rounded-full bg-muted overflow-hidden shrink-0 relative">
-                      {trip.organizer.image ? (
-                        <Image src={trip.organizer.image} alt={trip.organizer.name} fill className="object-cover" />
-                      ) : (
-                        <div className="w-full h-full bg-primary/20 flex items-center justify-center text-primary font-bold">
-                          {trip.organizer.name.charAt(0)}
-                        </div>
-                      )}
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold text-sm shrink-0 uppercase">
+                      {trip.organizer.name.charAt(0)}
                     </div>
-                    <div>
-                      <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold">Hosted by</p>
-                      <p className="text-sm font-semibold">{trip.organizer.name}</p>
+                    <div className="flex flex-col">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider leading-tight mb-0.5">Hosted by</span>
+                      <span className="text-sm font-bold text-foreground leading-tight">{trip.organizer.name}</span>
                     </div>
                   </div>
 
                   {/* Dates */}
-                  <div className="flex items-center gap-2 mb-4 text-sm font-medium text-foreground/80">
-                    <CalendarIcon className="h-4 w-4 text-primary shrink-0" />
+                  <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground">
+                    <CalendarIcon className="h-4 w-4 text-[#0ea5e9] shrink-0" />
                     <span>
                       {format(new Date(trip.startDate), "MMM d")} - {format(new Date(trip.endDate), "MMM d, yyyy")}
                     </span>
                   </div>
 
-                  <p className="text-muted-foreground text-sm line-clamp-3 leading-relaxed">
+                  <p className="text-sm text-muted-foreground line-clamp-1">
                     {trip.description}
                   </p>
                 </CardContent>
 
-                <CardFooter className="p-6 pt-0 flex items-center justify-between border-t border-transparent">
+                <CardFooter className="p-6 pt-0 flex items-center justify-between mt-auto">
                   <div className="flex flex-col">
-                    <span className="text-xs uppercase tracking-wider font-semibold text-muted-foreground mb-1">
+                    <span className="text-[10px] uppercase font-bold text-muted-foreground tracking-wider mb-0.5">
                       {trip.tripType === "FREE" ? "Entry" : "Price"}
                     </span>
                     {trip.tripType === "FREE" ? (
-                      <span className="text-2xl font-bold text-emerald-500">Free</span>
+                      <span className="text-xl font-bold text-emerald-500">Free</span>
                     ) : (
-                      <span className="text-2xl font-bold text-foreground flex items-center">
-                        <span className="text-lg mr-1 text-muted-foreground">₹</span>
+                      <span className="text-xl font-bold text-foreground flex items-center justify-center">
+                        <span className="text-sm mr-1 mt-0.5 text-muted-foreground">₹</span>
                         {trip.pricePerPerson?.toLocaleString('en-IN')}
                       </span>
                     )}
                   </div>
-                  <Button className="rounded-xl px-6 font-semibold shadow-md active:scale-95 transition-transform">
-                    View Trip
+                  <Button asChild className="rounded-full bg-[#0ea5e9] hover:bg-[#0284c7] text-white px-6 h-10 font-semibold shadow-none border-none transition-transform active:scale-95">
+                    <Link href={session?.user?.id === String(trip.organizerId) ? `/manage-trip/${trip.id}` : `/trips/${trip.id}`}>
+                      {session?.user?.id === String(trip.organizerId) ? "Manage Trip" : "View Trip"}
+                    </Link>
                   </Button>
                 </CardFooter>
               </Card>

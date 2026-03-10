@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { getTripColor } from "@/lib/constants";
 import {
   Select,
   SelectContent,
@@ -286,14 +287,18 @@ export default function CreateTrip() {
           {/* Visual Side */}
           <div className="col-span-1 lg:col-span-5 hidden lg:block sticky top-8">
             <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] shadow-2xl glass p-1.5 border border-muted/30">
-               <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden bg-muted">
-                <Image
-                  src={formData.imageUrl || `https://loremflickr.com/800/1000/${encodeURIComponent(formData.destination || formData.title || 'travel')}`}
-                  alt="Trip Cover Preview"
-                  fill
-                  className="object-cover transition-opacity duration-500 grayscale opacity-90"
-                  unoptimized
-                />
+              <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden bg-muted">
+                {formData.imageUrl ? (
+                  <Image
+                    src={formData.imageUrl}
+                    alt="Trip Cover Preview"
+                    fill
+                    className="object-cover transition-opacity duration-500 grayscale opacity-90"
+                    unoptimized
+                  />
+                ) : (
+                  <div className="w-full h-full grayscale opacity-90" style={{ backgroundColor: getTripColor(formData.title || "preview") }} />
+                )}
                 
                 {/* Live Preview Overlay */}
                 <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent p-6 pt-24 text-white">

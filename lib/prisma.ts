@@ -9,6 +9,9 @@ declare global {
   var prismaGlobal: undefined | ReturnType<typeof prismaClientSingleton>
 }
 
+// Force clear stale cache to pick up new schema changes (like `phone`)
+globalThis.prismaGlobal = undefined;
+
 const prisma = globalThis.prismaGlobal ?? prismaClientSingleton()
 
 export default prisma

@@ -35,8 +35,9 @@ export async function POST(req: Request) {
 
     const userId = parseInt(session.user.id);
 
-    // Automatically generate an image based on destination or title if not provided
-    const finalImageUrl = imageUrl || `https://loremflickr.com/800/600/${encodeURIComponent(destination || title || 'travel')}`;
+    // If user provided an image, we save it. If not, we don't create an Image record,
+    // and rely entirely on the consistent getFallbackImage on the frontend/read side.
+    const finalImageUrl = imageUrl ? imageUrl.trim() : null;
 
     // Create the trip and update user role in a transaction
     const [trip, updatedUser] = await prisma.$transaction([
@@ -54,11 +55,13 @@ export async function POST(req: Request) {
           endDate: new Date(endDate),
           organizerId: userId,
           status: "APPROVED", // Auto-approving for now, could be DRAFT
-          images: {
-            create: {
-              imageUrl: finalImageUrl
+          ...(finalImageUrl ? {
+            images: {
+              create: {
+                imageUrl: finalImageUrl
+              }
             }
-          }
+          } : {})
         },
         include: {
           images: true,
@@ -112,7 +115,7 @@ export async function GET() {
     const formattedTrips = trips.map(trip => ({
       ...trip,
       joinedCount: trip._count.members,
-      coverImage: trip.images[0]?.imageUrl || `https://loremflickr.com/800/600/${encodeURIComponent(trip.destination || trip.title || 'travel')}`
+      coverImage: trip.images[0]?.imageUrl || null
     }));
 
     return NextResponse.json(formattedTrips);
