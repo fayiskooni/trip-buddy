@@ -22,7 +22,8 @@ export async function POST(req: Request) {
       maxParticipants, 
       startDate, 
       endDate,
-      imageUrl 
+      imageUrl,
+      phone
     } = body;
 
     // Validate required fields
@@ -39,8 +40,7 @@ export async function POST(req: Request) {
     // and rely entirely on the consistent getFallbackImage on the frontend/read side.
     const finalImageUrl = imageUrl ? imageUrl.trim() : null;
 
-    // Create the trip and update user role in a transaction
-    const [trip, updatedUser] = await prisma.$transaction([
+    const transactionOps: any[] = [
       prisma.trip.create({
         data: {
           title,
@@ -72,7 +72,20 @@ export async function POST(req: Request) {
         where: { id: userId },
         data: { role: "ORGANIZER" }
       })
-    ]);
+    ];
+
+    if (phone && phone.trim() !== '') {
+      transactionOps[1] = prisma.user.update({
+        where: { id: userId },
+        data: { 
+          role: "ORGANIZER",
+          phone: phone.trim() 
+        }
+      });
+    }
+
+    // Create the trip and update user role in a transaction
+    const [trip, updatedUser] = await prisma.$transaction(transactionOps);
 
     return NextResponse.json({
       message: "Trip created successfully",
@@ -93,8 +106,14 @@ export async function GET() {
     const session = await getServerSession(authOptions);
     const userId = session?.user?.id ? parseInt(session.user.id) : null;
 
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+
     const whereClause: any = {
-      status: "APPROVED"
+      status: "APPROVED",
+      startDate: {
+        gt: startOfToday
+      }
     };
 
     if (userId) {

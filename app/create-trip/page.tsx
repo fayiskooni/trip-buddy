@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import { ArrowLeft, Loader2, CalendarIcon } from "lucide-react";
@@ -49,6 +49,30 @@ export default function CreateTrip() {
 
   const [startDate, setStartDate] = useState<Date>();
   const [endDate, setEndDate] = useState<Date>();
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [phone, setPhone] = useState("");
+  const [hasPhone, setHasPhone] = useState(false);
+  const [countryCode, setCountryCode] = useState("+91");
+
+  useEffect(() => {
+    // Check if user already has a phone number
+    const checkProfile = async () => {
+      try {
+        const res = await fetch("/api/user/profile");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.phone) {
+            setHasPhone(true);
+            setPhone(data.phone);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch profile", error);
+      }
+    };
+    checkProfile();
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
@@ -56,6 +80,16 @@ export default function CreateTrip() {
 
   const handleSelectChange = (value: string, field: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setImageFile(file);
+      setImagePreview(URL.createObjectURL(file));
+      // Clear manual URL if they select a file
+      setFormData((prev) => ({ ...prev, imageUrl: "" }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -70,15 +104,45 @@ export default function CreateTrip() {
       return;
     }
 
+    if (!hasPhone && (!phone.trim() || !countryCode.trim())) {
+      toast.error("Please provide a valid country code and phone number.");
+      return;
+    }
+
+    const fullPhone = !hasPhone ? `${countryCode.trim()} ${phone.trim()}` : undefined;
+
     setIsSubmitting(true);
     try {
+      let finalImageUrl = formData.imageUrl;
+
+      // 1. Upload image if a file was selected
+      if (imageFile) {
+        const uploadData = new FormData();
+        uploadData.append("file", imageFile);
+
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: uploadData,
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error("Failed to upload image");
+        }
+
+        const uploadResult = await uploadRes.json();
+        finalImageUrl = uploadResult.imageUrl;
+      }
+
+      // 2. Create the trip (and simultaneously update phone if missing)
       const res = await fetch("/api/trips", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...formData,
+          imageUrl: finalImageUrl,
           startDate: startDate.toISOString(),
           endDate: endDate.toISOString(),
+          phone: fullPhone, // passing phone if it's new
         }),
       });
 
@@ -257,18 +321,72 @@ export default function CreateTrip() {
                   </motion.div>
                 )}
 
-                <div className="space-y-2">
-                  <Label htmlFor="imageUrl" className="text-base">Cover Image URL</Label>
-                  <Input 
-                    id="imageUrl" 
-                    type="url" 
-                    placeholder="https://images.unsplash.com/photo-1234.jpg" 
-                    className="h-12 bg-background/50" 
-                    value={formData.imageUrl} 
-                    onChange={handleChange} 
-                  />
-                  <p className="text-xs text-muted-foreground mt-2 inline-block">Must be a direct link to an image file (e.g. ending in .jpg or .png). Webpage links will not work.</p>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="imageFile" className="text-base">Upload Cover Image</Label>
+                    <Input 
+                      id="imageFile" 
+                      type="file" 
+                      accept="image/*"
+                      className="h-12 bg-background/50 cursor-pointer pt-3 file:mr-4 file:py-1 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20" 
+                      onChange={handleFileChange} 
+                    />
+                  </div>
+
+                  <div className="relative flex items-center py-2">
+                    <div className="flex-grow border-t border-muted"></div>
+                    <span className="flex-shrink-0 mx-4 text-muted-foreground text-xs font-medium uppercase tracking-wider">Or provide a link</span>
+                    <div className="flex-grow border-t border-muted"></div>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="imageUrl" className="text-base">Cover Image URL</Label>
+                    <Input 
+                      id="imageUrl" 
+                      type="url" 
+                      placeholder="https://images.unsplash.com/photo-1234.jpg" 
+                      className="h-12 bg-background/50" 
+                      value={formData.imageUrl} 
+                      onChange={handleChange}
+                      disabled={!!imageFile} 
+                    />
+                    <p className="text-xs text-muted-foreground mt-2 inline-block">Must be a direct link to an image file (e.g. ending in .jpg or .png).</p>
+                  </div>
                 </div>
+
+                {!hasPhone && (
+                  <div className="space-y-4 pt-4 border-t border-muted">
+                    <div className="space-y-2">
+                      <Label htmlFor="phone" className="text-base text-blue-500 font-semibold gap-2 flex items-center">
+                        Contact Information Required
+                      </Label>
+                      <p className="text-sm text-muted-foreground mb-3">
+                        As a host, you need to provide a contact number so members can reach you for coordination. This will be saved to your profile.
+                      </p>
+                      <div className="flex gap-3">
+                        <div className="w-[80px]">
+                          <Input
+                            id="countryCode"
+                            placeholder="+91"
+                            className="h-12 text-center bg-background/50"
+                            value={countryCode}
+                            onChange={(e) => setCountryCode(e.target.value)}
+                          />
+                        </div>
+                        <div className="relative flex-1">
+                          <Input
+                            id="phone"
+                            placeholder="5550123456"
+                            className="h-12 bg-background/50"
+                            value={phone}
+                            onChange={(e) => setPhone(e.target.value)}
+                            required={!hasPhone}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
 
               <Button type="submit" disabled={isSubmitting} className="w-full h-14 text-base font-semibold rounded-xl">
@@ -288,9 +406,9 @@ export default function CreateTrip() {
           <div className="col-span-1 lg:col-span-5 hidden lg:block sticky top-8">
             <div className="relative rounded-[2rem] overflow-hidden aspect-[4/5] shadow-2xl glass p-1.5 border border-muted/30">
               <div className="relative w-full h-full rounded-[1.8rem] overflow-hidden bg-muted">
-                {formData.imageUrl ? (
+                {(imagePreview || formData.imageUrl) ? (
                   <Image
-                    src={formData.imageUrl}
+                    src={imagePreview || formData.imageUrl}
                     alt="Trip Cover Preview"
                     fill
                     className="object-cover transition-opacity duration-500 grayscale opacity-90"

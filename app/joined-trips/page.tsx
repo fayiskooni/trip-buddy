@@ -81,7 +81,7 @@ export default function JoinedTripsPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {trips.map((trip) => (
-              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/20 bg-background hover:shadow-xl transition-all duration-500 flex flex-col h-full shadow-sm">
+              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/20 bg-background hover:shadow-xl transition-all duration-500 flex flex-col h-full shadow-sm p-0 gap-0">
                 <div className="relative h-64 w-full overflow-hidden">
                   {trip.coverImage ? (
                     <Image
@@ -108,9 +108,16 @@ export default function JoinedTripsPage() {
                   </div>
 
                   {/* Bottom Image Overlay Text */}
-                  <div className="absolute bottom-5 left-6 right-6">
-                     <div className="inline-block px-3 py-1 bg-white/30 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider mb-2 text-white">
-                      {trip.category}
+                  <div className="absolute bottom-5 left-6 right-6 flex flex-col items-start">
+                     <div className="flex flex-wrap gap-2 mb-2">
+                       <div className="inline-block px-3 py-1 bg-white/30 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white border border-white/10">
+                        {trip.category}
+                      </div>
+                      {new Date(trip.startDate) <= new Date() && (
+                        <div className="inline-block px-3 py-1 bg-destructive/80 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white border border-destructive/20 shadow-sm">
+                          Expired
+                        </div>
+                      )}
                     </div>
                     <h3 className="text-3xl font-extrabold text-white leading-tight mb-1 line-clamp-2">
                       {trip.title}

@@ -49,6 +49,7 @@ export default async function TripDetailsPage({ params }: { params: any }) {
   const isJoined = trip.members.length > 0;
   const coverImage = trip.images[0]?.imageUrl || null;
   const isFull = trip._count.members >= trip.maxParticipants;
+  const isExpired = new Date(trip.startDate) <= new Date();
 
   return (
     <div className="min-h-screen bg-background relative md:pb-24">
@@ -75,13 +76,18 @@ export default async function TripDetailsPage({ params }: { params: any }) {
           )}
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
           
-          <div className="absolute top-6 left-6 flex gap-2">
+          <div className="absolute top-6 left-6 flex flex-wrap gap-2">
             <div className="px-4 py-1.5 bg-white/30 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-sm border border-white/10">
               {trip.category}
             </div>
             {trip.tripType === "FREE" && (
               <div className="px-4 py-1.5 bg-emerald-500/80 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-sm border border-emerald-400/20">
                 Free Entry
+              </div>
+            )}
+            {isExpired && (
+              <div className="px-4 py-1.5 bg-destructive/80 backdrop-blur-md rounded-full text-xs font-bold uppercase tracking-wider text-white shadow-sm border border-destructive/20">
+                Expired
               </div>
             )}
           </div>
@@ -144,29 +150,23 @@ export default async function TripDetailsPage({ params }: { params: any }) {
                 <div>
                   <h4 className="text-2xl font-bold mb-1">{trip.organizer.name}</h4>
                   
-                  {/* Contact Info (Only visible to joined members or the organizer) */}
-                  {(isJoined || isOrganizer) ? (
-                    <div className="space-y-2 mt-3 text-muted-foreground">
+                  {/* Contact Info (Always visible safely) */}
+                  <div className="space-y-2 mt-3 text-muted-foreground">
+                    <div className="flex items-center text-sm">
+                      <Mail className="h-4 w-4 mr-2" />
+                      <a href={`mailto:${trip.organizer.email}`} className="hover:text-blue-500 transition-colors">
+                        {trip.organizer.email}
+                      </a>
+                    </div>
+                    {trip.organizer.phone && (
                       <div className="flex items-center text-sm">
-                        <Mail className="h-4 w-4 mr-2" />
-                        <a href={`mailto:${trip.organizer.email}`} className="hover:text-blue-500 transition-colors">
-                          {trip.organizer.email}
+                        <Phone className="h-4 w-4 mr-2" />
+                        <a href={`tel:${trip.organizer.phone}`} className="hover:text-blue-500 transition-colors">
+                          {trip.organizer.phone}
                         </a>
                       </div>
-                      {trip.organizer.phone && (
-                        <div className="flex items-center text-sm">
-                          <Phone className="h-4 w-4 mr-2" />
-                          <a href={`tel:${trip.organizer.phone}`} className="hover:text-blue-500 transition-colors">
-                            {trip.organizer.phone}
-                          </a>
-                        </div>
-                      )}
-                    </div>
-                  ) : (
-                    <p className="text-sm text-balance text-muted-foreground mt-2 max-w-sm">
-                      Contact information is secured and will be shared with you once you join the trip.
-                    </p>
-                  )}
+                    )}
+                  </div>
                 </div>
               </div>
             </section>
@@ -194,12 +194,35 @@ export default async function TripDetailsPage({ params }: { params: any }) {
                 </div>
               ) : isJoined ? (
                 <div className="space-y-4">
-                  <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium flex items-start border border-emerald-100 mb-4">
-                    <ShieldCheck className="h-5 w-5 mr-2 shrink-0 text-emerald-500" />
-                    You're in! You have successfully joined this trip. Look at the host details to coordinate.
+                  <div className="bg-emerald-50 text-emerald-700 p-4 rounded-xl text-sm font-medium flex flex-col items-start border border-emerald-100 mb-4 gap-2">
+                    <div className="flex items-center">
+                      <ShieldCheck className="h-5 w-5 mr-2 shrink-0 text-emerald-500" />
+                      You're in! You have successfully joined this trip.
+                    </div>
                   </div>
                   <Button disabled className="w-full px-8 py-6 rounded-2xl font-bold text-lg bg-emerald-500 hover:bg-emerald-500 opacity-100 text-white cursor-default">
                     Joined ✅
+                  </Button>
+                  
+                  {/* Cancellation Request Section */}
+                  <div className="pt-4 border-t border-muted text-center flex flex-col items-center">
+                    <p className="text-sm text-muted-foreground mb-3">
+                      Need to cancel your spot? Please contact the host directly to request cancellation.
+                    </p>
+                    <Button variant="outline" asChild className="w-full rounded-xl border-muted-foreground/30 hover:bg-destructive/5 hover:text-destructive hover:border-destructive/30 transition-colors">
+                      <a href={`mailto:${trip.organizer.email}?subject=Cancellation%20Request%20for%20${encodeURIComponent(trip.title)}`}>
+                        Request Cancellation
+                      </a>
+                    </Button>
+                  </div>
+                </div>
+              ) : isExpired ? (
+                <div className="space-y-4">
+                  <div className="bg-muted text-muted-foreground p-4 rounded-xl text-sm font-medium mb-4 text-center border border-muted-foreground/20">
+                    This trip has already expired.
+                  </div>
+                  <Button disabled className="w-full px-8 py-6 rounded-2xl font-bold text-lg bg-muted text-muted-foreground">
+                    Expired
                   </Button>
                 </div>
               ) : isFull ? (

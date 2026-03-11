@@ -89,7 +89,7 @@ export default function PackagesPage() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {trips.map((trip) => (
-              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/20 bg-background hover:shadow-xl transition-all duration-500 flex flex-col h-full shadow-sm">
+              <Card key={trip.id} className="group overflow-hidden rounded-[2rem] border-muted/20 bg-background hover:shadow-xl transition-all duration-500 flex flex-col h-full shadow-sm p-0 gap-0">
                 <div className="relative h-64 w-full overflow-hidden">
                   {trip.coverImage ? (
                     <Image
