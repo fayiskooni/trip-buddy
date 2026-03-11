@@ -14,7 +14,7 @@ import { JoinTripButton } from "@/components/features/join-trip-button";
 
 export default async function TripDetailsPage({ params }: { params: any }) {
   const session = await getServerSession(authOptions);
-  if (!session) redirect("/login");
+  if (!session) redirect(`/auth/login?callbackUrl=/trips/${params.id}`);
   
   const { id } = await params;
   const tripId = parseInt(id);

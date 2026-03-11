@@ -15,7 +15,7 @@ export default async function ManageTripsDashboard() {
   const session = await getServerSession(authOptions);
   
   if (!session || !session.user?.id) {
-    redirect("/login");
+    redirect("/auth/login?callbackUrl=/manage-trip");
   }
 
   const userId = parseInt(session.user.id);

@@ -13,10 +13,15 @@ export default function AnimatedNavigationTabsDemo() {
     { id: 4, tile: "How it works", href: "/how-it-works" },
   ];
 
-  // If the user is an organizer, attach the Manage Trip link
-  const items = session?.user?.role === "ORGANIZER" 
-    ? [...baseItems, { id: 5, tile: "Manage Trip", href: "/manage-trip" }]
-    : baseItems;
+  let items = [...baseItems];
+  
+  if (session?.user) {
+    items.push({ id: 5, tile: "Joined Trips", href: "/joined-trips" });
+    
+    if (session.user.role === "ORGANIZER") {
+      items.push({ id: 6, tile: "Manage Trip", href: "/manage-trip" });
+    }
+  }
 
   return (
     <div className="w-full">

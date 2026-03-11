@@ -262,12 +262,12 @@ export default function CreateTrip() {
                   <Input 
                     id="imageUrl" 
                     type="url" 
-                    placeholder="https://images.unsplash.com/photo-..." 
+                    placeholder="https://images.unsplash.com/photo-1234.jpg" 
                     className="h-12 bg-background/50" 
                     value={formData.imageUrl} 
                     onChange={handleChange} 
                   />
-                  <p className="text-xs text-muted-foreground mt-2 inline-block">Provide a high-quality link to showcase your trip. Unsplash is great.</p>
+                  <p className="text-xs text-muted-foreground mt-2 inline-block">Must be a direct link to an image file (e.g. ending in .jpg or .png). Webpage links will not work.</p>
                 </div>
               </div>
 

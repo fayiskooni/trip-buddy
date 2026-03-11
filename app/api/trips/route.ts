@@ -90,10 +90,23 @@ export async function POST(req: Request) {
 
 export async function GET() {
   try {
+    const session = await getServerSession(authOptions);
+    const userId = session?.user?.id ? parseInt(session.user.id) : null;
+
+    const whereClause: any = {
+      status: "APPROVED"
+    };
+
+    if (userId) {
+      whereClause.members = {
+        none: {
+          userId: userId
+        }
+      };
+    }
+
     const trips = await prisma.trip.findMany({
-      where: {
-        status: "APPROVED"
-      },
+      where: whereClause,
       include: {
         images: true,
         organizer: {

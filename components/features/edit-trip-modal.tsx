@@ -120,7 +120,7 @@ export function EditTripModal({
               onChange={handleChange} 
               className="h-12 bg-muted/30"
             />
-            <p className="text-xs text-muted-foreground">Leave empty to use a random light color placeholder.</p>
+            <p className="text-xs text-muted-foreground">Must be a direct link to an image file (ends in .jpg, .png, etc.). Webpage links will not work. Leave empty to use a random color.</p>
           </div>
 
           <div className="space-y-2">
